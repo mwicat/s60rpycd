@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="pyrun" default="py2sis" basedir="." xmlns:antsy="antlib:com.mwicat.antsymble">
+
+	<property file="symbiant.properties" />
+
+	<property name="src.dir" location="src" />
+	<property name="lib.dir" location="src" />
+	<property name="dist.dir" location="dist" />
+	
+	<property name="app.name" value="${ant.project.name}" />
+	<property name="app.exec" value="${appname}_${uid}.exe" />
+	<property name="app.caps" value="ALL-TCB-CommDD-MultimediaDD-DRM-DiskAdmin-NetworkControl-AllFiles" />
+
+	
+	<property name="py.src" location="${src.dir}/default.py" />
+	
+	<property name="profile" value="s60ui" />
+	
+	<property name="sis.name" location="${appname}.sis" />
+	
+	<property name="script.dir" value="E:\data\python" />
+	<property name="tmp.dir" value="E:\Others" />
+	
+	<property name="pys60.drive" value="E:" />
+	<property name="install.drive" value="E:" />
+	
+	<echo>${ant.version}</echo>
+		
+	<property environment="env" />
+
+	<taskdef resource="pyAntTasks.properties" />
+
+	<target name="py2sis">
+		<antsy:py2sis src="${py.src}">
+			<options>
+				<arg value="--appname=${app.name}" />
+				<arg value="--cert=${cert}" />
+				<arg value="--caps=${app.caps}" />				
+				<arg value="--privkey=${privkey}" />
+				<arg value="--profile=${profile}" />
+			</options>
+			<args>
+				<arg value="${sisfile}" />
+			</args>
+		</antsy:py2sis>
+	</target>
+
+	<target name="upload">
+		<antsy:upload host="${rpyc.host}" src="${dist.dir}/${sis.name}" dst="${tmp.dir}" />
+	</target>
+
+	<target name="upload-script">
+		<antsy:upload-script host="${rpyc.host}" src="${py.src}" drive="${pys60.drive}" />
+	</target>
+
+	<target name="upload-script-emu">
+		<antsy:upload-script-emu drive="t:" root="${env.EPOCROOT}" src="${py.src}" />
+	</target>
+
+	<target name="upload-lib-emu">
+		<antsy:upload-lib-emu drive="t:" root="${env.EPOCROOT}" src="${lib.dir}/" />
+	</target>
+	
+	<target name="install">
+		<antsy:install host="${rpyc.host}" path="${dist.dir}/${sis.name}"/>
+	</target>
+	
+	<target name="run">
+		<antsy:run exec="${app.exec}" />
+	</target>
+
+	<target name="run-script">
+		<antsy:run-script drive="${pys60.drive}" name="${py.src}" />
+	</target>
+
+
+</project>
